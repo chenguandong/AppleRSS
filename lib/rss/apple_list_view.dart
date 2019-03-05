@@ -3,7 +3,7 @@ import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/bod_cast_bean_entity.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 class ItemBean {
   final String title;
   final String subtitle;
@@ -13,7 +13,7 @@ class ItemBean {
 
 class AppleListView extends StatefulWidget {
   final String title;
-  final String  url;
+  final String url;
 
   AppleListView(this.title, this.url);
 
@@ -30,7 +30,7 @@ class _AppleListView extends State<AppleListView> {
   getHttpData() async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
-    var url =widget.url; //播客
+    var url = widget.url; //播客
 
     // Await the http get response, then decode the json-formatted responce.
     var response = await http.get(url);
@@ -57,9 +57,7 @@ class _AppleListView extends State<AppleListView> {
             return new AppleItemList(rssItemList[i]);
           },
         ),
-        onRefresh: () {
-
-        });
+        onRefresh: () {});
   }
 
   @override
@@ -121,6 +119,35 @@ class _AppleItemList extends State<AppleItemList> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return new ListTile(
+      onTap: () {
+        print(widget._itemBean.url);
+        new MaterialApp(
+          routes: {
+            "/": (_) => new WebviewScaffold(
+              url: "https://www.google.com",
+              appBar: new AppBar(
+                title: new Text("Widget webview"),
+              ),
+            ),
+          },
+        );
+
+        Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+          return new Scaffold(
+              appBar: new AppBar(title: Text(widget._itemBean.name)),
+              body: Center(
+                child: new WebviewScaffold(
+                  withJavascript:true,
+                  withLocalStorage:true,
+                  allowFileURLs: true,
+                  withLocalUrl: true,
+                  url: widget._itemBean.url,
+
+                ),
+              ));
+        }));
+
+      },
       title: Text(
           widget._itemBean.artistname == null ? "" : widget._itemBean.name),
       subtitle: Text(widget._itemBean.artistname == null
