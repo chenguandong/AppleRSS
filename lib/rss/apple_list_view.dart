@@ -12,6 +12,11 @@ class ItemBean {
 }
 
 class AppleListView extends StatefulWidget {
+  final String title;
+  final String  url;
+
+  AppleListView(this.title, this.url);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -25,8 +30,7 @@ class _AppleListView extends State<AppleListView> {
   getHttpData() async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
-    var url =
-        "https://rss.itunes.apple.com/api/v1/cn/podcasts/top-podcasts/all/100/explicit.json"; //播客
+    var url =widget.url; //播客
 
     // Await the http get response, then decode the json-formatted responce.
     var response = await http.get(url);
@@ -35,6 +39,7 @@ class _AppleListView extends State<AppleListView> {
       var itemCount = BodCastBean.fromJson(jsonResponse);
       print(itemCount.toJson());
       setState(() {
+        rssItemList.clear();
         rssItemList.addAll(itemCount.feed.result);
         print("Request failed with status: ${response.statusCode}.");
       });
@@ -53,7 +58,7 @@ class _AppleListView extends State<AppleListView> {
           },
         ),
         onRefresh: () {
-          setState(() {});
+
         });
   }
 
@@ -62,6 +67,39 @@ class _AppleListView extends State<AppleListView> {
     // TODO: implement initState
     this.getHttpData();
     super.initState();
+    print("initState");
+  }
+
+  @override
+  void didUpdateWidget(AppleListView oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print("didUpdateWidget");
+    this.getHttpData();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    print("deactive");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("dispose");
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    print("reassemble");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print("didChangeDependencies");
   }
 }
 
