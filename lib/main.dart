@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Demo4_ShopList.dart';
-import 'UIDemo.dart';
+import 'package:flutter_app/rss/apple_list_view.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -22,11 +21,15 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
         backgroundColor: Colors.white,
-        primaryColor: Colors.black
+        primaryColor: Colors.blue
       ),
-      home:Container(
-        color: Colors.white,
-        child: MyHomePage(),
+      home:Scaffold(
+        appBar: AppBar(
+          title: Text("Apple RSS"),
+        ),
+        body: Center(
+          child: AppleListView(),
+        ),
       )
     );
 
