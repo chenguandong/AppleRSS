@@ -2,8 +2,9 @@ import 'dart:convert' as convert;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/bod_cast_bean_entity.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:http/http.dart' as http;
+
 class ItemBean {
   final String title;
   final String subtitle;
@@ -26,6 +27,15 @@ class AppleListView extends StatefulWidget {
 
 class _AppleListView extends State<AppleListView> {
   List<BodCastBeanFeedResult> rssItemList = new List();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  Future<Null> refreshList() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {});
+
+    return null;
+  }
 
   getHttpData() async {
     // This example uses the Google Books API to search for books about http.
@@ -41,6 +51,7 @@ class _AppleListView extends State<AppleListView> {
       setState(() {
         rssItemList.clear();
         rssItemList.addAll(itemCount.feed.result);
+        refreshKey.currentState.show(atTop: false);
         print("Request failed with status: ${response.statusCode}.");
       });
     } else {
@@ -51,13 +62,14 @@ class _AppleListView extends State<AppleListView> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+        key: refreshKey,
         child: ListView.builder(
           itemCount: rssItemList == null ? 0 : rssItemList.length,
           itemBuilder: (context, i) {
             return new AppleItemList(rssItemList[i]);
           },
         ),
-        onRefresh: () {});
+        onRefresh: refreshList);
   }
 
   @override
@@ -121,32 +133,20 @@ class _AppleItemList extends State<AppleItemList> {
     return new ListTile(
       onTap: () {
         print(widget._itemBean.url);
-        new MaterialApp(
-          routes: {
-            "/": (_) => new WebviewScaffold(
-              url: "https://www.google.com",
-              appBar: new AppBar(
-                title: new Text("Widget webview"),
-              ),
-            ),
-          },
-        );
 
         Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
           return new Scaffold(
               appBar: new AppBar(title: Text(widget._itemBean.name)),
               body: Center(
                 child: new WebviewScaffold(
-                  withJavascript:true,
-                  withLocalStorage:true,
+                  withJavascript: true,
+                  withLocalStorage: true,
                   allowFileURLs: true,
                   withLocalUrl: true,
                   url: widget._itemBean.url,
-
                 ),
               ));
         }));
-
       },
       title: Text(
           widget._itemBean.artistname == null ? "" : widget._itemBean.name),
