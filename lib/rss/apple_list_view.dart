@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/bod_cast_bean_entity.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 class ItemBean {
   final String title;
   final String subtitle;
@@ -37,6 +38,15 @@ class _AppleListView extends State<AppleListView> {
     return null;
   }
 
+  goUrl(String url) async {
+    String typecode ;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    typecode =await prefs.getString("typecode");
+    print(url);
+    print(typecode);
+    print(url.toString().replaceAll("cn", typecode));
+    return typecode.isNotEmpty?url.toString().replaceAll("cn", typecode):url;
+  }
   getHttpData() async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
@@ -127,14 +137,33 @@ class AppleItemList extends StatefulWidget {
 }
 
 class _AppleItemList extends State<AppleItemList> {
+   goUrl() async {
+     String typecode ;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     typecode =await prefs.getString("typecode");
+    print(widget._itemBean.url);
+    print(typecode);
+    print(widget._itemBean.url.toString().replaceAll("cn", typecode));
+
+     await _launchURL(typecode.isNotEmpty?widget._itemBean.url.toString().replaceAll("cn", typecode):widget._itemBean.url);
+  }
+
+  // String typecode = prefs.getString("typecode");
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return new ListTile(
       onTap: () {
-        print(widget._itemBean.url);
-
-        Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+       
+        goUrl();
+       /* Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
           return new Scaffold(
               appBar: new AppBar(title: Text(widget._itemBean.name)),
               body: Center(
@@ -146,7 +175,7 @@ class _AppleItemList extends State<AppleItemList> {
                   url: widget._itemBean.url,
                 ),
               ));
-        }));
+        }));*/
       },
       title: Text(
           widget._itemBean.artistname == null ? "" : widget._itemBean.name),

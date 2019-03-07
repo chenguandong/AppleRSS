@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/beans/menu_item_bean.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class MyDrawer extends StatefulWidget{
   List<DrawerBean>countrysList = [
 
@@ -69,6 +69,12 @@ class _MyDrawer extends State<MyDrawer>{
     );
   }
   Widget _buildRow(DrawerBean menuBean) {
+
+    _incrementCounter() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('typecode', menuBean.typeCode);
+    }
+
     return new ListTile(
       title: new Text(
           menuBean.title
@@ -77,16 +83,22 @@ class _MyDrawer extends State<MyDrawer>{
       onTap: () {
         setState(() {
 
+          _incrementCounter();
+
+          // 打开抽屉菜单
+          Scaffold.of(context).openEndDrawer();
+
+
         });
       },
       onLongPress: () {
-        Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+        /*Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
           return new Scaffold(
               appBar: new AppBar(title: Text('跳转测试')),
               body: Center(
                 child: new Text('666'),
               ));
-        }));
+        }));*/
       },
     );
   }
