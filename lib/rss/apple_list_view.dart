@@ -38,15 +38,6 @@ class _AppleListView extends State<AppleListView> {
     return null;
   }
 
-  goUrl(String url) async {
-    String typecode ;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    typecode =await prefs.getString("typecode");
-    print(url);
-    print(typecode);
-    print(url.toString().replaceAll("cn", typecode));
-    return typecode.isNotEmpty?url.toString().replaceAll("cn", typecode):url;
-  }
   getHttpData() async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
@@ -144,8 +135,8 @@ class _AppleItemList extends State<AppleItemList> {
     print(widget._itemBean.url);
     print(typecode);
     print(widget._itemBean.url.toString().replaceAll("cn", typecode));
-
-     await _launchURL(typecode.isNotEmpty?widget._itemBean.url.toString().replaceAll("cn", typecode):widget._itemBean.url);
+//_launchURL(typecode.isNotEmpty?widget._itemBean.url.toString().replaceAll("cn", typecode):widget._itemBean.url)
+     await _launchURL(widget._itemBean.url);
   }
 
   // String typecode = prefs.getString("typecode");
