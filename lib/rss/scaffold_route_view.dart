@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/apple_list_view.dart';
 import 'package:flutter_app/rss/beans/menu_item_bean.dart';
 import 'package:flutter_app/rss/main_drawer_view.dart';
-class ScaffoldRoute extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _ScaffoldRoute();
-  }
-}
 
-class _ScaffoldRoute extends State<ScaffoldRoute> {
+class ScaffoldRoute extends StatefulWidget {
+  int onIndex ;
+
   List<MenuItemBean> showMenuList = [];
   int pageLength = 0;
-  int _selectedIndex = 0;
+  int _selectedIndex ;
 
   final List<MenuItemBean> appleMusicItemList1 = [
     MenuItemBean("Coming Soon",
@@ -66,37 +61,50 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
         "https://rss.itunes.apple.com/api/v1/cn/podcasts/top-podcasts/all/100/explicit.json"),
   ];
 
-  _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      initDataList();
-    });
+
+  ScaffoldRoute(this.onIndex);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _ScaffoldRoute();
+  }
+}
+
+class _ScaffoldRoute extends State<ScaffoldRoute> {
+
+  @override
+  void initState() {
+    initDataList();
+    super.initState();
   }
 
   void initDataList() {
-    showMenuList.clear();
-    if (_selectedIndex == 0) {
-      showMenuList.addAll(appleMusicItemList1);
-    } else if (_selectedIndex == 1) {
-      showMenuList.addAll(iOSAppItemList2);
-    } else if (_selectedIndex == 2) {
-      showMenuList.addAll(macAppItemList3);
-    } else if (_selectedIndex == 3) {
-      showMenuList.addAll(iTunesUItemList4);
-    } else if (_selectedIndex == 4) {
-      showMenuList.addAll(bokeItemList5);
+    widget._selectedIndex = widget.onIndex;
+    widget.showMenuList.clear();
+    if (widget._selectedIndex == 0) {
+      widget.showMenuList.addAll(widget.appleMusicItemList1);
+    } else if (widget._selectedIndex == 1) {
+      widget.showMenuList.addAll(widget.iOSAppItemList2);
+    } else if (widget._selectedIndex == 2) {
+      widget.showMenuList.addAll(widget.macAppItemList3);
+    } else if (widget._selectedIndex == 3) {
+      widget.showMenuList.addAll(widget.iTunesUItemList4);
+    } else if (widget._selectedIndex == 4) {
+      widget.showMenuList.addAll(widget.bokeItemList5);
     }
-    pageLength = showMenuList.length;
+    widget.pageLength = widget.showMenuList.length;
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    initDataList();
+
 
     return DefaultTabController(
-        length: pageLength,
+        length: widget.pageLength,
         child: Scaffold(
+          drawer: MyDrawer(),
           appBar: AppBar(
             title: Text("Apple RSS"),
             leading: IconButton(
@@ -107,7 +115,7 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
                 }),
             bottom: new TabBar(
               isScrollable: true,
-              tabs: showMenuList.map<Widget>((MenuItemBean choice) {
+              tabs: widget.showMenuList.map<Widget>((MenuItemBean choice) {
                 return Tab(
                   text: choice.menuTitle,
                 );
@@ -115,42 +123,13 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
             ),
           ),
           body: TabBarView(
-            children: showMenuList.map<Widget>((MenuItemBean choice) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new AppleListView(choice.menuTitle, choice.menuUrl),
-              );
-            }).toList(),
-          ),
-          drawer: MyDrawer(),
-          bottomNavigationBar: BottomNavigationBar(
-            fixedColor: Colors.blue,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  backgroundColor: Colors.red,
-                  icon: Icon(Icons.music_note),
-                  title: Text('AppleMusic')),
-              BottomNavigationBarItem(
-                  backgroundColor: Colors.red,
-                  icon: Icon(Icons.apps),
-                  title: Text('iOS App')),
-              BottomNavigationBarItem(
-                  backgroundColor: Colors.red,
-                  icon: Icon(Icons.desktop_mac),
-                  title: Text('Mac App')),
-              BottomNavigationBarItem(
-                  backgroundColor: Colors.red,
-                  icon: Icon(Icons.video_library),
-                  title: Text('iTunes U')),
-              BottomNavigationBarItem(
-                  backgroundColor: Colors.red,
-                  icon: Icon(Icons.rss_feed),
-                  title: Text('播客')),
-            ],
+              children: widget.showMenuList.map<Widget>((MenuItemBean choice) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new AppleListView(choice.menuTitle, choice.menuUrl),
+                );
+              }).toList(),
           ),
         ));
   }
 }
-

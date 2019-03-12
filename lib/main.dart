@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/rss/scaffold_route_view.dart';
+import 'package:flutter_app/rss/main_index.dart';
+import 'package:flutter_app/rss/main_drawer_view.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -22,9 +23,15 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.red,
             backgroundColor: Colors.white,
             primaryColor: Colors.red),
-        home: ScaffoldRoute()
+        home: Scaffold(
+          drawer: MyDrawer(),
+          body: Index(),
+
+        )
 
     );
+
+
   }
 
 /*  body: Center(
