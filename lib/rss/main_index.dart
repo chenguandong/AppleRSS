@@ -12,17 +12,18 @@ class Index extends StatefulWidget{
 class _Index extends State<Index>{
   int _currentIndex = 0;
   StatefulWidget _currentPage;
-  List<StatefulWidget>itemViews = [
-    new ScaffoldRoute(0),
-    new ScaffoldRoute(1),
-    new ScaffoldRoute(2),
-    new ScaffoldRoute(3),
-    new ScaffoldRoute(4)
-  ];
+  List<StatefulWidget>itemViews;
 
   @override
   void initState() {
     // TODO: implement initState
+    itemViews = [
+       ScaffoldRoute(0),
+       ScaffoldRoute(1),
+       ScaffoldRoute(2),
+       ScaffoldRoute(3),
+       ScaffoldRoute(4)
+    ];
     _currentPage = itemViews[_currentIndex];
     super.initState();
   }

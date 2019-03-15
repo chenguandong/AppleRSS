@@ -6,12 +6,13 @@ import 'package:flutter_app/rss/main_drawer_view.dart';
 class ScaffoldRoute extends StatefulWidget {
   int onIndex =0;
 
+
   ScaffoldRoute(this.onIndex);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return new _ScaffoldRoute();
+    return  _ScaffoldRoute();
   }
 }
 
@@ -71,48 +72,62 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
         "https://rss.itunes.apple.com/api/v1/cn/podcasts/top-podcasts/all/100/explicit.json"),
   ];
 
+  int _currentTab = 0;
+
   @override
   void initState() {
-    initDataList();
+
     super.initState();
   }
 
   void initDataList() {
      _selectedIndex =  widget.onIndex;
      showMenuList.clear();
-    if ( _selectedIndex == 0) {
+
+     if ( _selectedIndex == 0) {
        showMenuList.addAll( appleMusicItemList1);
-    } else if ( _selectedIndex == 1) {
+     } else if ( _selectedIndex == 1) {
        showMenuList.addAll( iOSAppItemList2);
-    } else if ( _selectedIndex == 2) {
+     } else if ( _selectedIndex == 2) {
        showMenuList.addAll( macAppItemList3);
-    } else if ( _selectedIndex == 3) {
+     } else if ( _selectedIndex == 3) {
        showMenuList.addAll( iTunesUItemList4);
-    } else if ( _selectedIndex == 4) {
+     } else if ( _selectedIndex == 4) {
        showMenuList.addAll( bokeItemList5);
-    }
-     pageLength =  showMenuList.length;
+     }
+
+    setState(() {
+      pageLength =  showMenuList.length;
+      showMenuList = showMenuList;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    initDataList();
 
-
-    return DefaultTabController(
+    return  DefaultTabController(
+      initialIndex: 0,
         length:  pageLength,
-        child: new Scaffold(
-          drawer:new MyDrawer(),
-          appBar:new AppBar(
-            title:new Text("Apple RSS"),
-            leading:new IconButton(
-                icon:new Icon(Icons.language, color: Colors.white), //自定义图标
+        child:  Scaffold(
+          drawer: MyDrawer(),
+          appBar: AppBar(
+            title: Text("Apple RSS"),
+
+            leading: IconButton(
+                icon: Icon(Icons.language, color: Colors.white), //自定义图标
                 onPressed: () {
                   // 打开抽屉菜单
                   Scaffold.of(context).openDrawer();
                 }),
-            bottom: new TabBar(
+            bottom:  TabBar(
               isScrollable: true,
+              onTap: (index){
+                setState(() {
+                  _currentTab = index;
+                });
+              },
               tabs:  showMenuList.map<Widget>((MenuItemBean choice) {
                 return new Tab(
                   text: choice.menuTitle,
