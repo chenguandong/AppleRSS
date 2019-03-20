@@ -1,3 +1,4 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rss/main_index.dart';
 import 'package:flutter_app/rss/main_drawer_view.dart';

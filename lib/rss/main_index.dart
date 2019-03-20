@@ -11,11 +11,10 @@ class Index extends StatefulWidget {
 }
 
 class _Index extends State<Index> with SingleTickerProviderStateMixin {
-  int _currentIndex = 0;
-
   //定义底部导航Tab
   TabController _tabController;
 
+  int _selectedIndex = 0;
   @override
   void initState() {
     _tabController = new TabController(
@@ -31,22 +30,22 @@ class _Index extends State<Index> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  //定义底部导航项目
-  final List<Tab> _bottomTabs = <Tab>[
-    Tab(icon: Icon(Icons.music_note), text: 'AppleMusic'),
-    Tab(icon: Icon(Icons.apps), text: 'iOS App'),
-    Tab(icon: Icon(Icons.desktop_mac), text: 'Mac App'),
-    Tab(icon: Icon(Icons.video_library), text: 'iTunes U'),
-    Tab(icon: Icon(Icons.rss_feed), text: '播客'),
-  ];
+  _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _tabController.animateTo(index);
+     /* setState(() {
 
+      });*/
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
 
     return new Scaffold(
         appBar: new AppBar(
-          backgroundColor: Colors.deepOrange,
+          backgroundColor: Colors.red,
           title: new Text('Apple RSS'),
           leading: IconButton(
               icon: Icon(Icons.language, color: Colors.white), //自定义图标
@@ -63,42 +62,34 @@ class _Index extends State<Index> with SingleTickerProviderStateMixin {
           ScaffoldRoute(3),
           ScaffoldRoute(4)
         ]),
-        bottomNavigationBar: new Material(
-          color: Colors.deepOrange, //底部导航栏主题颜色
-          child: new TabBar(
-            isScrollable:false;
-            controller: _tabController,
-            tabs: _bottomTabs,
-            indicatorColor: Colors.transparent, //tab标签的下划线颜色
-          ),
-        )
+        bottomNavigationBar:  BottomNavigationBar(
+          fixedColor: Colors.blue,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                backgroundColor: Colors.red,
+                icon: Icon(Icons.music_note),
+                title: Text('AppleMusic')),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.red,
+                icon: Icon(Icons.apps),
+                title: Text('iOS App')),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.red,
+                icon: Icon(Icons.desktop_mac),
+                title: Text('Mac App')),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.red,
+                icon: Icon(Icons.video_library),
+                title: Text('iTunes U')),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.red,
+                icon: Icon(Icons.rss_feed),
+                title: Text('播客')),
+          ],
+        ),
+    );
 
-        /*BottomNavigationBar(
-        fixedColor: Colors.blue,
-        currentIndex: _currentIndex,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              backgroundColor: Colors.red,
-              icon: Icon(Icons.music_note),
-              title: Text('AppleMusic')),
-          BottomNavigationBarItem(
-              backgroundColor: Colors.red,
-              icon: Icon(Icons.apps),
-              title: Text('iOS App')),
-          BottomNavigationBarItem(
-              backgroundColor: Colors.red,
-              icon: Icon(Icons.desktop_mac),
-              title: Text('Mac App')),
-          BottomNavigationBarItem(
-              backgroundColor: Colors.red,
-              icon: Icon(Icons.video_library),
-              title: Text('iTunes U')),
-          BottomNavigationBarItem(
-              backgroundColor: Colors.red,
-              icon: Icon(Icons.rss_feed),
-              title: Text('播客')),
-        ],
-      ),*/
-        );
   }
 }

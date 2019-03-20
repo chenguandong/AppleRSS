@@ -1,11 +1,12 @@
 import 'dart:convert' as convert;
-
+import 'package:flutter_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rss/beans/event_message.dart';
 import 'package:flutter_app/rss/bod_cast_bean_entity.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:event_bus/event_bus.dart';
 class ItemBean {
   final String title;
   final String subtitle;
@@ -27,6 +28,7 @@ class AppleListView extends StatefulWidget {
 }
 
 class _AppleListView extends State<AppleListView> {
+
   List<BodCastBeanFeedResult> rssItemList = new List();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -76,6 +78,11 @@ class _AppleListView extends State<AppleListView> {
   @override
   void initState() {
     // TODO: implement initState
+    eventBus.on().listen((onData){
+      print(",,,,,,,,,,,.............");
+    });
+
+
     this.getHttpData();
     super.initState();
     print("initState");
@@ -147,12 +154,14 @@ class _AppleItemList extends State<AppleItemList> {
       throw 'Could not launch $url';
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return new ListTile(
       onTap: () {
-       
+
         goUrl();
        /* Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
           return new Scaffold(
@@ -182,4 +191,6 @@ class _AppleItemList extends State<AppleItemList> {
       ),
     );
   }
+
+
 }

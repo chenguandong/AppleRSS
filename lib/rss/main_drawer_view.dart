@@ -1,4 +1,6 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rss/beans/event_message.dart';
 import 'package:flutter_app/rss/beans/menu_item_bean.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class MyDrawer extends StatefulWidget{
@@ -84,10 +86,9 @@ class _MyDrawer extends State<MyDrawer>{
         setState(() {
 
           _incrementCounter();
-
+          eventBus.fire(EventMessageEvent("xxxxx"));
           // 打开抽屉菜单
           Scaffold.of(context).openEndDrawer();
-
 
         });
       },
