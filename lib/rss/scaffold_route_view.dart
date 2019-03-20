@@ -16,7 +16,7 @@ class ScaffoldRoute extends StatefulWidget {
   }
 }
 
-class _ScaffoldRoute extends State<ScaffoldRoute> {
+class _ScaffoldRoute extends State<ScaffoldRoute> with SingleTickerProviderStateMixin {
   List<MenuItemBean> showMenuList = [];
   int pageLength = 0;
   int _selectedIndex ;
@@ -71,12 +71,12 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
     MenuItemBean("播客排行",
         "https://rss.itunes.apple.com/api/v1/cn/podcasts/top-podcasts/all/100/explicit.json"),
   ];
-
-  int _currentTab = 0;
+  TabController _tabController;
 
   @override
   void initState() {
-
+    initDataList();
+    _tabController = new TabController(vsync: this, length: showMenuList.length);
     super.initState();
   }
 
@@ -96,53 +96,41 @@ class _ScaffoldRoute extends State<ScaffoldRoute> {
        showMenuList.addAll( bokeItemList5);
      }
 
-    setState(() {
-      pageLength =  showMenuList.length;
-      showMenuList = showMenuList;
-    });
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    initDataList();
-
-    return  DefaultTabController(
-      initialIndex: 0,
-        length:  pageLength,
-        child:  Scaffold(
-          drawer: MyDrawer(),
-          appBar: AppBar(
-            title: Text("Apple RSS"),
-
-            leading: IconButton(
-                icon: Icon(Icons.language, color: Colors.white), //自定义图标
-                onPressed: () {
-                  // 打开抽屉菜单
-                  Scaffold.of(context).openDrawer();
-                }),
-            bottom:  TabBar(
-              isScrollable: true,
-              onTap: (index){
-                setState(() {
-                  _currentTab = index;
-                });
-              },
-              tabs:  showMenuList.map<Widget>((MenuItemBean choice) {
-                return new Tab(
-                  text: choice.menuTitle,
-                );
-              }).toList(),
-            ),
-          ),
-          body:new TabBarView(
-              children:  showMenuList.map<Widget>((MenuItemBean choice) {
-                return new Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: new AppleListView(choice.menuTitle, choice.menuUrl),
-                );
-              }).toList(),
-          ),
-        ));
+    return  Scaffold(
+      appBar: AppBar(
+        title:  TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          onTap: (index){
+            setState(() {
+            });
+          },
+          tabs:  showMenuList.map<Widget>((MenuItemBean choice) {
+            return new Tab(
+              text: choice.menuTitle,
+            );
+          }).toList(),
+        ),
+      ),
+      body:new TabBarView(
+        controller: _tabController,
+        children:  showMenuList.map<Widget>((MenuItemBean choice) {
+          return new Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: new AppleListView(choice.menuTitle, choice.menuUrl),
+          );
+        }).toList(),
+      ),
+    );
   }
 }
