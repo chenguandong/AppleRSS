@@ -31,7 +31,7 @@ class _AppleListView extends State<AppleListView> {
 
   List<BodCastBeanFeedResult> rssItemList = new List();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
-
+  bool isShowLoading = false;
   Future<Null> refreshList() async {
     await Future.delayed(Duration(seconds: 2));
 
@@ -54,8 +54,10 @@ class _AppleListView extends State<AppleListView> {
       setState(() {
         rssItemList.clear();
         rssItemList.addAll(itemCount.feed.result);
-        refreshKey.currentState.show(atTop: false);
+        //refreshKey.currentState.dispose();
+        isShowLoading = true;
         print("Request failed with status: ${response.statusCode}.");
+
       });
     } else {
       print("Request failed with status: ${response.statusCode}.");
@@ -64,15 +66,49 @@ class _AppleListView extends State<AppleListView> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+
+   /* return RefreshIndicator(
         key: refreshKey,
-        child: ListView.builder(
-          itemCount: rssItemList == null ? 0 : rssItemList.length,
-          itemBuilder: (context, i) {
-            return new AppleItemList(rssItemList[i]);
-          },
+        child:Stack(
+          children: <Widget>[
+            ListView.builder(
+              itemCount: rssItemList == null ? 0 : rssItemList.length,
+              itemBuilder: (context, i) {
+                return new AppleItemList(rssItemList[i]);
+              },
+
+            ),
+
+             Container(
+              alignment: Alignment.center,
+              child: new CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            )
+          ],
         ),
-        onRefresh: refreshList);
+        onRefresh: refreshList);*/
+   return Stack(
+     children: <Widget>[
+       ListView.builder(
+         itemCount: rssItemList == null ? 0 : rssItemList.length,
+         itemBuilder: (context, i) {
+           return new AppleItemList(rssItemList[i]);
+         },
+
+       ),
+       new Offstage(
+           offstage: isShowLoading, //这里控制
+           child: Container(
+             alignment: Alignment.center,
+             child: new CircularProgressIndicator(
+               strokeWidth: 2.0,
+             ),
+           )
+       )
+
+     ],
+   ) ;
   }
 
   @override
@@ -81,8 +117,7 @@ class _AppleListView extends State<AppleListView> {
     eventBus.on().listen((onData){
       print(",,,,,,,,,,,.............");
     });
-
-
+    //refreshKey.currentState.show(atTop: true);
     this.getHttpData();
     super.initState();
     print("initState");

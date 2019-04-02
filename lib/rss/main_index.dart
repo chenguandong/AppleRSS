@@ -46,15 +46,16 @@ class _Index extends State<Index> with SingleTickerProviderStateMixin {
     return new Scaffold(
         appBar: new AppBar(
           backgroundColor: Colors.red,
+            elevation:0,
           title: new Text('Apple RSS'),
-          leading: IconButton(
+          /*leading: IconButton(
               icon: Icon(Icons.language, color: Colors.white), //自定义图标
               onPressed: () {
                 // 打开抽屉菜单
                 Scaffold.of(context).openDrawer();
-              }),
+              }),*/
         ), //头部的标题AppBar
-        drawer: MyDrawer(),
+        //drawer: MyDrawer(),
         body: TabBarView(controller: _tabController, children: [
           ScaffoldRoute(0),
           ScaffoldRoute(1),
