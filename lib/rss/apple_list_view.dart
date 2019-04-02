@@ -54,7 +54,6 @@ class _AppleListView extends State<AppleListView> {
       setState(() {
         rssItemList.clear();
         rssItemList.addAll(itemCount.feed.result);
-        //refreshKey.currentState.dispose();
         isShowLoading = true;
         print("Request failed with status: ${response.statusCode}.");
 
@@ -67,33 +66,15 @@ class _AppleListView extends State<AppleListView> {
   @override
   Widget build(BuildContext context) {
 
-   /* return RefreshIndicator(
-        key: refreshKey,
-        child:Stack(
-          children: <Widget>[
-            ListView.builder(
-              itemCount: rssItemList == null ? 0 : rssItemList.length,
-              itemBuilder: (context, i) {
-                return new AppleItemList(rssItemList[i]);
-              },
 
-            ),
-
-             Container(
-              alignment: Alignment.center,
-              child: new CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            )
-          ],
-        ),
-        onRefresh: refreshList);*/
    return Stack(
      children: <Widget>[
        ListView.builder(
-         itemCount: rssItemList == null ? 0 : rssItemList.length,
+         itemCount: rssItemList == null ? 0 : rssItemList.length*2,
          itemBuilder: (context, i) {
-           return new AppleItemList(rssItemList[i]);
+           if (i.isOdd) return new Divider();
+           final index = i ~/ 2;
+           return new AppleItemList(rssItemList[index],index);
          },
 
        ),
@@ -158,13 +139,15 @@ class _AppleListView extends State<AppleListView> {
 
 class AppleItemList extends StatefulWidget {
   final BodCastBeanFeedResult _itemBean;
+  final int i;
 
-  AppleItemList(this._itemBean);
+
+  AppleItemList(this._itemBean, this.i);
+
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-
     return _AppleItemList();
   }
 }
@@ -194,23 +177,10 @@ class _AppleItemList extends State<AppleItemList> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final index   = widget.i+1;
     return new ListTile(
       onTap: () {
-
         goUrl();
-       /* Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
-          return new Scaffold(
-              appBar: new AppBar(title: Text(widget._itemBean.name)),
-              body: Center(
-                child: new WebviewScaffold(
-                  withJavascript: true,
-                  withLocalStorage: true,
-                  allowFileURLs: true,
-                  withLocalUrl: true,
-                  url: widget._itemBean.url,
-                ),
-              ));
-        }));*/
       },
       title: Text(
           widget._itemBean.artistname == null ? "" : widget._itemBean.name),
@@ -223,7 +193,9 @@ class _AppleItemList extends State<AppleItemList> {
         backgroundImage: NetworkImage(
           widget._itemBean.artworkurl100,
         ),
+
       ),
+        trailing:Text('$index')
     );
   }
 
