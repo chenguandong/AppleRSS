@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:event_bus/event_bus.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 class ItemBean {
   final String title;
   final String subtitle;
@@ -32,6 +34,7 @@ class _AppleListView extends State<AppleListView> {
   List<BodCastBeanFeedResult> rssItemList = new List();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   bool isShowLoading = false;
+
   Future<Null> refreshList() async {
     await Future.delayed(Duration(seconds: 2));
 
@@ -56,7 +59,6 @@ class _AppleListView extends State<AppleListView> {
         rssItemList.addAll(itemCount.feed.result);
         isShowLoading = true;
         print("Request failed with status: ${response.statusCode}.");
-
       });
     } else {
       print("Request failed with status: ${response.statusCode}.");
@@ -65,37 +67,35 @@ class _AppleListView extends State<AppleListView> {
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        ListView.builder(
+          itemCount: rssItemList == null ? 0 : rssItemList.length * 2,
+          itemBuilder: (context, i) {
+            if (i.isOdd) return new Divider();
+            final index = i ~/ 2;
+            return new AppleItemList(rssItemList[index], index);
+          },
 
+        ),
+        new Offstage(
+            offstage: isShowLoading, //这里控制
+            child: Container(
+              alignment: Alignment.center,
+              child: new CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            )
+        )
 
-   return Stack(
-     children: <Widget>[
-       ListView.builder(
-         itemCount: rssItemList == null ? 0 : rssItemList.length*2,
-         itemBuilder: (context, i) {
-           if (i.isOdd) return new Divider();
-           final index = i ~/ 2;
-           return new AppleItemList(rssItemList[index],index);
-         },
-
-       ),
-       new Offstage(
-           offstage: isShowLoading, //这里控制
-           child: Container(
-             alignment: Alignment.center,
-             child: new CircularProgressIndicator(
-               strokeWidth: 2.0,
-             ),
-           )
-       )
-
-     ],
-   ) ;
+      ],
+    );
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    eventBus.on().listen((onData){
+    eventBus.on().listen((onData) {
       print(",,,,,,,,,,,.............");
     });
     //refreshKey.currentState.show(atTop: true);
@@ -153,15 +153,15 @@ class AppleItemList extends StatefulWidget {
 }
 
 class _AppleItemList extends State<AppleItemList> {
-   goUrl() async {
-     String typecode ;
+  goUrl() async {
+    String typecode;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-     typecode =await prefs.getString("typecode");
+    typecode = await prefs.getString("typecode");
     print(widget._itemBean.url);
     print(typecode);
     print(widget._itemBean.url.toString().replaceAll("cn", typecode));
 //_launchURL(typecode.isNotEmpty?widget._itemBean.url.toString().replaceAll("cn", typecode):widget._itemBean.url)
-     await _launchURL(widget._itemBean.url);
+    await _launchURL(widget._itemBean.url);
   }
 
   // String typecode = prefs.getString("typecode");
@@ -176,27 +176,47 @@ class _AppleItemList extends State<AppleItemList> {
 
   @override
   Widget build(BuildContext context) {
+
     // TODO: implement build
-    final index   = widget.i+1;
+    final index = widget.i + 1;
     return new ListTile(
-      onTap: () {
-        goUrl();
-      },
-      title: Text(
-          widget._itemBean.artistname == null ? "" : widget._itemBean.name),
-      subtitle: Text(widget._itemBean.artistname == null
-          ? ""
-          : widget._itemBean.artistname),
-      leading: new CircleAvatar(
+        onTap: () {
+          _launchURL(widget._itemBean.url);
+        },
+        title: Text(
+            widget._itemBean.artistname == null ? "" : widget._itemBean.name),
+        subtitle: Text(widget._itemBean.artistname == null
+            ? ""
+            : widget._itemBean.artistname),
+        leading: CachedNetworkImage(
+        width:40,
+        imageUrl: widget._itemBean.artworkurl100,
+        placeholder: (context, url) =>  SizedBox( width: 15,height: 15, child:new CircularProgressIndicator(
+            strokeWidth:1,
+            valueColor: AlwaysStoppedAnimation(Colors.grey)
+        ) )
+
+    ),
+
+          /*new Image.network(
+        widget._itemBean.artworkurl100,
+          width: 50.0
+      )*/
+
+          /*new CircleAvatar(
+        //maxRadius:25,
         backgroundColor: Colors.grey,
         foregroundColor: Colors.grey,
         backgroundImage: NetworkImage(
           widget._itemBean.artworkurl100,
-        ),
+        ),*/
 
-      ),
-        trailing:Text('$index')
-    );
+        trailing:Text('$index', style: TextStyle(
+      //fontStyle:FontStyle.italic,
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      //color: Colors.black
+    )));
   }
 
 
